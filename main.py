@@ -147,14 +147,23 @@ while gameon:
     fo.x +=fo.x_change
     fo.y +=fo.y_change
     fo.movement()
+    if fo.x <= 0:
+        fo.x = 0
+    if fo.x >= 736:
+        fo.x = 736
+    if fo.y <= 0:
+        fo.y = 0
+    if fo.y >= 536:
+        fo.y = 536
+    
     
     
 
 #enemy
-for e in enemies:
-    enemies[e].display()
-    enemies[e].movement()
-    enemies.x[e] +=enemies.x_change[e]
+    for e in range(no_of_enemies):
+        enemies[e].display()
+        enemies[e].movement()
+        enemies[e].x +=enemies[e].x_change
 #Game Over
 
 #killed
