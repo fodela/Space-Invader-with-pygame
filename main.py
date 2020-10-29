@@ -78,7 +78,7 @@ class Bullet(Character):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.bulletImage = pygame.image.load('images/bullet.png')
-        self.move = 0.5
+        self.move = 1
         self.bullet_state = 'ready'
     def fire(self,x,y):
         """
@@ -113,6 +113,22 @@ class Bullet(Character):
             self.y -= self.y_change
             self.fire(self.x,self.y)
 
+class Scores(Character):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.score_value = 0
+        self.score_font = pygame.font.Font('freesansbold.ttf',32)
+    def show_score(self):
+        self.score = self.score_font.render(f"Score : {str(self.score_value)}", True, (255,255,255))
+        screen.blit(self.score, (self.x,self.y))
+
+def isCollision(x_one,y_one,x_two,y_two):
+    distance = math.sqrt(math.pow(x_one-x_two,2)+math.pow(y_one-y_two,2))
+    if distance <= 27:
+        return True
+    else:
+        return False
+
 
 #Creating player
 fo = Player(370,480)
@@ -122,11 +138,12 @@ no_of_enemies = 5
 enemies = []
 for e in range(no_of_enemies):
     enemies.append(Enemy(random.randint(30,730),random.randint(50,150)))
-     
-# en_one = Enemy(random.randint(30,730),random.randint(50,150))
 
 #Creating bullet
 blt = Bullet(fo.x,fo.y)
+
+#Creating score
+scr = Scores(10,10)
 
 
 
@@ -166,7 +183,18 @@ while gameon:
         enemies[e].x +=enemies[e].x_change
 #Game Over
 
-#killed
+#killed enemy
+        enemy_shot = isCollision(blt.x,blt.y,enemies[e].x,enemies[e].y)
+        if enemy_shot:
+            #sound
+            collision_sound = mixer.Sound('sounds/explosion.wav')
+            collision_sound.play()
+            #effect
+            blt.y = fo.y
+            blt.bullet_state = 'ready'
+            enemies[e].x = random.randint(0,736)
+            enemies[e].y = random.randint(50,150)
+            scr.score_value += 1
 
 #bullet movement
     blt.reset(fo.y)
@@ -177,7 +205,7 @@ while gameon:
     #life
 
     #scores
-
+    scr.show_score()
 
 
     pygame.display.update()
