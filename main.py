@@ -129,7 +129,17 @@ def isCollision(x_one,y_one,x_two,y_two):
     else:
         return False
 
-class Life(Character):
+class GameOver():
+    def __init__(self):
+        self.game_over_font = pygame.font.Font('freesansbold.ttf',64)
+        self.game_over_sound_frequency = 0
+        self.crash_sound_frequency = 0
+    def display(self):
+        self.game_over_text = self.game_over_font.render('Game Over',True, (255,0,0))
+        screen.blit(self.game_over_text,(200,250))
+
+
+class Life():
     def __init__(self):
         self.life = 3
         self.heart = pygame.image.load('images/life.png')
@@ -147,23 +157,27 @@ class Life(Character):
         elif self.life == 0:
             screen.blit(self.broken_heart,(680,10))
 
-
-#Creating player
+#Instances
+    #player
 fo = Player(370,480)
 
-#Creating enemies
+    #enemies
 no_of_enemies = 5
 enemies = []
 for e in range(no_of_enemies):
     enemies.append(Enemy(random.randint(30,730),random.randint(50,150)))
 
-#Creating bullet
+    #bullet
 blt = Bullet(fo.x,fo.y)
 
-#Creating score
+    #score
 scr = Scores(10,10)
-#player_life
+    #Game over
+g_o = GameOver()
+    #player_life
 pl_life = Life()
+
+
 
 
 
@@ -202,6 +216,27 @@ while gameon:
         enemies[e].movement()
         enemies[e].x +=enemies[e].x_change
     #Game Over
+        crash =  isCollision(fo.x,fo.y,enemies[e].x,enemies[e].y)
+        if crash:
+            pl_life.life = 0
+            if g_o.crash_sound_frequency == 0:
+                g_o.crash_sound = mixer.Sound('sounds/crash.wav')
+                g_o.crash_sound.play()
+                g_o.crash_sound_frequency +=1
+
+        if enemies[e].y >= 480 and enemies[e].y <=700:
+            enemies[e].y = 50
+            pl_life.life -=1
+        
+        if pl_life.life == 0:
+            if g_o.game_over_sound_frequency == 0:
+                g_o.game_over_sound = mixer.Sound('sounds/gameover.wav')
+                g_o.game_over_sound.play()
+                g_o.game_over_sound_frequency +=1
+            for i in range(no_of_enemies):
+                enemies[i].y = 9000
+            g_o.display()
+            break
 
     #killed enemy
         enemy_shot = isCollision(blt.x,blt.y,enemies[e].x,enemies[e].y)
