@@ -129,6 +129,24 @@ def isCollision(x_one,y_one,x_two,y_two):
     else:
         return False
 
+class Life(Character):
+    def __init__(self):
+        self.life = 3
+        self.heart = pygame.image.load('images/life.png')
+        self.broken_heart = pygame.image.load('images/broken-heart.png')
+    def display(self):
+        if self.life == 3:
+            screen.blit(self.heart,(760,10))
+            screen.blit(self.heart,(720,10))
+            screen.blit(self.heart,(680,10))
+        elif self.life == 2:
+            screen.blit(self.heart,(760,10))
+            screen.blit(self.heart,(720,10))
+        elif self.life == 1:
+            screen.blit(self.heart,(680,10))
+        elif self.life == 0:
+            screen.blit(self.broken_heart,(680,10))
+
 
 #Creating player
 fo = Player(370,480)
@@ -144,6 +162,8 @@ blt = Bullet(fo.x,fo.y)
 
 #Creating score
 scr = Scores(10,10)
+#player_life
+pl_life = Life()
 
 
 
@@ -160,7 +180,7 @@ while gameon:
                 blt.movement(fo.x,fo.y)
         blt.movement(fo.x,fo.y)
 
-#player
+    #player
     fo.x +=fo.x_change
     fo.y +=fo.y_change
     fo.movement()
@@ -176,14 +196,14 @@ while gameon:
     
     
 
-#enemy
+    #enemy
     for e in range(no_of_enemies):
         enemies[e].display()
         enemies[e].movement()
         enemies[e].x +=enemies[e].x_change
-#Game Over
+    #Game Over
 
-#killed enemy
+    #killed enemy
         enemy_shot = isCollision(blt.x,blt.y,enemies[e].x,enemies[e].y)
         if enemy_shot:
             #sound
@@ -196,15 +216,15 @@ while gameon:
             enemies[e].y = random.randint(50,150)
             scr.score_value += 1
 
-#bullet movement
+    #bullet movement
     blt.reset(fo.y)
     
-#display
-    #player
+    #display
+        #player
     fo.display()
-    #life
-
-    #scores
+        #life
+    pl_life.display()
+        #scores
     scr.show_score()
 
 
